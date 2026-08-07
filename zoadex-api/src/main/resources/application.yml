@@ -25,6 +25,19 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+  # Mail Configuration (configure with your SMTP provider)
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enabled: true
+
 server:
   port: 8080
 
@@ -33,6 +46,17 @@ zoadex:
   jwt:
     secret: CHANGE_ME_IN_PRODUCTION_USE_A_256_BIT_SECRET_KEY_HERE_PLACEHOLDER
     expiration-ms: 86400000
+
+  # Mail settings
+  mail:
+    from: ${MAIL_FROM:noreply@zoadex.app}
+    base-url: ${APP_BASE_URL:http://localhost:5173}
+
+  # Stripe Configuration (3 EUR/month premium subscription with 10 region slots)
+  stripe:
+    secret-key: ${STRIPE_SECRET_KEY:}
+    price-id: ${STRIPE_PRICE_ID:}
+    webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
 
   # External API Configuration
   gbif:

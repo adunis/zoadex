@@ -54,6 +54,38 @@ public class User {
     @Builder.Default
     private UserPlan plan = UserPlan.FREE;
 
+    // Email verification
+    @Column(name = "email_verified")
+    @Builder.Default
+    private boolean emailVerified = false;
+
+    @Column(name = "email_verification_token")
+    private String emailVerificationToken;
+
+    @Column(name = "email_verification_token_expires_at")
+    private LocalDateTime emailVerificationTokenExpiresAt;
+
+    // Password reset
+    @Column(name = "password_reset_token")
+    private String passwordResetToken;
+
+    @Column(name = "password_reset_token_expires_at")
+    private LocalDateTime passwordResetTokenExpiresAt;
+
+    // Stripe subscription
+    @Column(name = "stripe_customer_id")
+    private String stripeCustomerId;
+
+    @Column(name = "stripe_subscription_id")
+    private String stripeSubscriptionId;
+
+    @Column(name = "subscription_status", length = 50)
+    @Builder.Default
+    private String subscriptionStatus = "none";
+
+    @Column(name = "subscription_expires_at")
+    private LocalDateTime subscriptionExpiresAt;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -69,5 +101,10 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public boolean hasActiveSubscription() {
+        return "active".equals(subscriptionStatus) ||
+               (subscriptionExpiresAt != null && subscriptionExpiresAt.isAfter(LocalDateTime.now()));
     }
 }
