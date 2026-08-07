@@ -1,0 +1,37 @@
+# Java
+*.class
+*.jar
+*.war
+target/
+.gradle/
+build/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Node
+node_modules/
+dist/
+.env
+.env.local
+
+# Logs
+*.log
+
+# Temp/translation working files
+*.tmp
+batch*.sql
+*-source.txt
+to-translate*.txt
+top*.txt
+translations-batch.sql
+species-to-translate.txt
+
+# OS
+.DS_Store
+Thumbs.db
