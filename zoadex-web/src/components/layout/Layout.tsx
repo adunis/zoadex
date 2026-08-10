@@ -1,5 +1,6 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Navbar } from './Navbar';
+import { NotificationBell } from './NotificationBell';
 import { useActiveRegion } from '../../hooks/useActiveRegion';
 import { useAuth } from '../../hooks/useAuth';
 import { CountryFlag } from '../common/CountryFlag';
@@ -14,6 +15,7 @@ export function Layout() {
 
   return (
     <div className="app-layout">
+      {isAuthenticated && <NotificationBell />}
       <main className="app-content">
         <Outlet />
       </main>

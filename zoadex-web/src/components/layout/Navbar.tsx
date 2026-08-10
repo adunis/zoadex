@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Map, PlusCircle, Compass, User } from 'lucide-react';
+import { Home, Map, PlusCircle, Newspaper, Compass, User } from 'lucide-react';
 import { useLanguageContext } from '../../context/LanguageContext';
 
 export function Navbar() {
@@ -14,6 +14,10 @@ export function Navbar() {
       <NavLink to="/map" className="nav-item" aria-label={t('nav.map')}>
         <Map size={22} />
         <span>{t('nav.map')}</span>
+      </NavLink>
+      <NavLink to="/feed" className="nav-item" aria-label="Feed">
+        <Newspaper size={22} />
+        <span>Feed</span>
       </NavLink>
       <NavLink to="/log" className="nav-item nav-item--primary" aria-label={t('nav.log')}>
         <PlusCircle size={30} />
@@ -30,3 +34,4 @@ export function Navbar() {
     </nav>
   );
 }
+

@@ -21,6 +21,9 @@ import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { VerifyEmailPage } from './pages/VerifyEmailPage';
 import { SpeciesDetailPage } from './pages/SpeciesDetailPage';
+import { FeedPage } from './pages/FeedPage';
+import { SightingDetailPage } from './pages/SightingDetailPage';
+import { FriendsPage } from './pages/FriendsPage';
 import { EmailVerificationBanner } from './components/auth/EmailVerificationBanner';
 import { InstallPrompt } from './components/pwa/InstallPrompt';
 
@@ -82,6 +85,9 @@ function App() {
                 <Route path="/regions" element={<RegionsPage />} />
                 <Route path="/regions/:id" element={<RegionDetailPage />} />
                 <Route path="/species/:id" element={<SpeciesDetailPage />} />
+                <Route path="/feed" element={<FeedPage />} />
+                <Route path="/sightings/:id" element={<SightingDetailPage />} />
+                <Route path="/friends" element={<FriendsPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
