@@ -8,6 +8,10 @@ export interface User {
   activeRegionName: string | null;
   totalSightings: number;
   uniqueSpeciesDiscovered: number;
+  xp?: number;
+  level?: number;
+  xpInCurrentLevel?: number;
+  xpNeededForNext?: number;
   createdAt: string;
 }
 

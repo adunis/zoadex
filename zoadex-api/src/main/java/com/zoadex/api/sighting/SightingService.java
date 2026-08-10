@@ -1,6 +1,7 @@
 package com.zoadex.api.sighting;
 
 import com.zoadex.api.badge.BadgeEvaluationService;
+import com.zoadex.api.xp.XpService;
 import com.zoadex.api.common.exception.BadRequestException;
 import com.zoadex.api.common.exception.ResourceNotFoundException;
 import com.zoadex.api.map.dto.SightingPin;
@@ -33,6 +34,7 @@ public class SightingService {
     private final SightingRepository sightingRepository;
     private final SpeciesRepository speciesRepository;
     private final BadgeEvaluationService badgeEvaluationService;
+    private final XpService xpService;
     private final UserRepository userRepository;
     private final RegionRepository regionRepository;
 
@@ -84,6 +86,9 @@ public class SightingService {
 
         // Evaluate badges after sighting
         badgeEvaluationService.evaluateAfterSighting(userId, sighting);
+
+        // Award XP
+        xpService.awardSightingXp(userId, sighting);
 
         return toResponse(sighting, species);
     }

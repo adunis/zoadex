@@ -1,4 +1,4 @@
-import { Award, Eye, LogOut, MapPin, Calendar, Flame, CreditCard } from 'lucide-react';
+import { Award, Eye, LogOut, MapPin, Calendar, Flame, CreditCard, Star } from 'lucide-react';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../hooks/useAuth';
@@ -114,6 +114,24 @@ export function ProfilePage() {
         </div>
       </div>
 
+      
+      {/* XP Progress */}
+      <div className="profile-page__xp">
+        <div className="profile-page__xp-header">
+          <Star size={20} className="profile-page__xp-icon" />
+          <span className="profile-page__xp-level">Level {user?.level ?? 1}</span>
+          <span className="profile-page__xp-total">{user?.xp ?? 0} XP</span>
+        </div>
+        <div className="profile-page__xp-bar">
+          <div
+            className="profile-page__xp-fill"
+            style={{ width: `${user?.xpNeededForNext ? Math.min(100, ((user?.xpInCurrentLevel ?? 0) / user.xpNeededForNext) * 100) : 0}%` }}
+          />
+        </div>
+        <p className="profile-page__xp-text">
+          {user?.xpInCurrentLevel ?? 0} / {user?.xpNeededForNext ?? 100} XP to next level
+        </p>
+      </div>
       {displayBadges.length > 0 && (
         <section className="profile-page__badges">
           <div className="profile-page__badges-header">

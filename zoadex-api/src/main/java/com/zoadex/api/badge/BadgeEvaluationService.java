@@ -8,6 +8,7 @@ import com.zoadex.api.species.SpeciesCategory;
 import com.zoadex.api.species.SpeciesRepository;
 import com.zoadex.api.user.User;
 import com.zoadex.api.user.UserRepository;
+import com.zoadex.api.xp.XpService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,7 @@ public class BadgeEvaluationService {
     private final SpeciesRepository speciesRepository;
     private final RegionSpeciesRepository regionSpeciesRepository;
     private final UserRepository userRepository;
+    private final XpService xpService;
 
     @Transactional
     public void evaluateAfterSighting(UUID userId, Sighting sighting) {
@@ -48,6 +50,7 @@ public class BadgeEvaluationService {
                         .triggeringSightingId(sighting.getId())
                         .build();
                 userBadgeRepository.save(userBadge);
+                xpService.awardBadgeXp(userId, badge.getId(), badge.getName());
                 log.info("User {} unlocked badge: {}", userId, badge.getName());
             }
         }

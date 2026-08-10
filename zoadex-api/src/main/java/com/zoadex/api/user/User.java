@@ -86,6 +86,16 @@ public class User {
     @Column(name = "subscription_expires_at")
     private LocalDateTime subscriptionExpiresAt;
 
+    
+    // XP and Level
+    @Column(name = "xp")
+    @Builder.Default
+    private int xp = 0;
+
+    @Column(name = "level")
+    @Builder.Default
+    private int level = 1;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 

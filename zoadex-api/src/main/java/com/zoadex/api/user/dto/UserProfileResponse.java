@@ -22,5 +22,9 @@ public class UserProfileResponse {
     private String activeRegionName;
     private long totalSightings;
     private long uniqueSpeciesDiscovered;
+    private int xp;
+    private int level;
+    private int xpInCurrentLevel;
+    private int xpNeededForNext;
     private LocalDateTime createdAt;
 }

@@ -5,6 +5,7 @@ import com.zoadex.api.common.exception.ResourceNotFoundException;
 import com.zoadex.api.region.Region;
 import com.zoadex.api.region.RegionRepository;
 import com.zoadex.api.sighting.SightingRepository;
+import com.zoadex.api.xp.XpService;
 import com.zoadex.api.user.dto.UpdateProfileRequest;
 import com.zoadex.api.user.dto.UserProfileResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class UserService {
     private final RegionRepository regionRepository;
     private final SightingRepository sightingRepository;
     private final UserRegionRepository userRegionRepository;
+    private final XpService xpService;
 
     public UserProfileResponse getProfile(UUID userId) {
         User user = userRepository.findById(userId)
@@ -40,6 +42,10 @@ public class UserService {
                 .activeRegionName(user.getActiveRegion() != null ? user.getActiveRegion().getName() : null)
                 .totalSightings(totalSightings)
                 .uniqueSpeciesDiscovered(uniqueDiscoveries)
+                .xp(user.getXp())
+                .level(user.getLevel())
+                .xpInCurrentLevel(user.getXp() - (user.getLevel() - 1) * 100)
+                .xpNeededForNext(100)
                 .createdAt(user.getCreatedAt())
                 .build();
     }
@@ -95,6 +101,9 @@ public class UserService {
             userRegionRepository.save(newRegion);
         }
 
+        // Award XP for unlocking a new region
+        xpService.awardRegionUnlockXp(userId, regionId);
+
         user.setActiveRegion(region);
         userRepository.save(user);
     }
@@ -138,6 +147,9 @@ public class UserService {
                 .unlockedAt(LocalDateTime.now())
                 .build();
         userRegionRepository.save(newRegion);
+
+        // Award XP for unlocking a new region
+        xpService.awardRegionUnlockXp(userId, regionId);
     }
 
     private int getMaxSlots(User user) {
