@@ -78,6 +78,10 @@ export function LoginPage() {
           </button>
         </form>
 
+        <p className="auth-page__link auth-page__link--forgot">
+          <Link to="/forgot-password">Forgot password?</Link>
+        </p>
+
         <p className="auth-page__link">
           Don't have an account? <Link to="/register">Register</Link>
         </p>

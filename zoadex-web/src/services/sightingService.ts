@@ -23,6 +23,20 @@ export const sightingService = {
     };
     return withFallback(
       async () => {
+        if (data.photo) {
+          const formData = new FormData();
+          formData.append('speciesId', data.speciesId);
+          formData.append('latitude', String(data.latitude));
+          formData.append('longitude', String(data.longitude));
+          formData.append('dateTime', data.dateTime);
+          if (data.notes) formData.append('notes', data.notes);
+          if (data.expeditionId) formData.append('expeditionId', data.expeditionId);
+          formData.append('photo', data.photo);
+          const response = await api.post<Sighting>('/sightings', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          return response.data;
+        }
         const response = await api.post<Sighting>('/sightings', data);
         return response.data;
       },

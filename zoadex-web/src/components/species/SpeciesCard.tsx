@@ -42,10 +42,18 @@ export function SpeciesCard({ species, onClick, rarityThresholds }: SpeciesCardP
   const thumbnailUrl = species.thumbnailUrl || (species.images ?? [])[0]?.url;
   const displayName = species.commonName ?? species.scientificName;
 
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      navigate(`/species/${species.id}`);
+    }
+  };
+
   return (
     <button
       className={`species-card ${species.discovered ? 'species-card--discovered' : ''}`}
-      onClick={onClick}
+      onClick={handleClick}
       type="button"
       aria-label={`${displayName}${species.discovered ? ' - discovered' : ''}`}
     >

@@ -2,6 +2,7 @@ export interface User {
   id: string;
   username: string;
   email: string;
+  emailVerified?: boolean;
   plan: string;
   activeRegionId: string | null;
   activeRegionName: string | null;
@@ -33,4 +34,5 @@ export interface AuthResponse {
   token: string;
   username: string;
   email: string;
+  emailVerified: boolean;
 }

@@ -34,5 +34,6 @@ export interface CreateSightingRequest {
   dateTime: string;
   notes?: string;
   photoUrl?: string;
+  photo?: File;
   expeditionId?: string;
 }

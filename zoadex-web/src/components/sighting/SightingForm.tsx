@@ -18,6 +18,7 @@ interface SightingFormProps {
     dateTime: string;
     notes?: string;
     photoUrl?: string;
+    photo?: File;
   }) => void;
   speciesOptions: { id: string; name: string }[];
   selectedSpecies?: { id: string; name: string } | null;
@@ -63,6 +64,7 @@ export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, expedi
   );
   const [notes, setNotes] = useState('');
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [latitudeInput, setLatitudeInput] = useState('');
   const [longitudeInput, setLongitudeInput] = useState('');
   const [mapSuggestions, setMapSuggestions] = useState<Suggestion[]>([]);
@@ -143,6 +145,7 @@ export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, expedi
   const handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setPhotoFile(file);
       const reader = new FileReader();
       reader.onload = (event) => {
         setPhotoPreview(event.target?.result as string);
@@ -163,6 +166,7 @@ export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, expedi
       dateTime: new Date(dateTime).toISOString(),
       notes: notes || undefined,
       photoUrl: photoPreview ?? undefined,
+      photo: photoFile ?? undefined,
     });
   };
 

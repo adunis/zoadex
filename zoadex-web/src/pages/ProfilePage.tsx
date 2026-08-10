@@ -1,4 +1,5 @@
-import { Award, Eye, LogOut, MapPin, Calendar, Flame } from 'lucide-react';
+import { Award, Eye, LogOut, MapPin, Calendar, Flame, CreditCard } from 'lucide-react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +7,37 @@ import { badgeService } from '../services/badgeService';
 import { BadgeCard } from '../components/badges/BadgeCard';
 import { useLanguageContext } from '../context/LanguageContext';
 import { UI_LANGUAGES, SPECIES_LANGUAGES, SpeciesLanguage } from '../i18n/translations';
+import api from '../services/api';
+
+function UpgradeButton() {
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
+
+  const handleUpgrade = async () => {
+    setUpgradeLoading(true);
+    try {
+      const response = await api.post<{ url: string }>('/payments/checkout');
+      window.location.href = response.data.url;
+    } catch {
+      setUpgradeLoading(false);
+    }
+  };
+
+  return (
+    <div className="profile-page__upgrade">
+      <p className="profile-page__upgrade-text">
+        🌟 Upgrade to <strong>PRO</strong> for unlimited regions, advanced stats, and more!
+      </p>
+      <button
+        className="btn btn--accent btn--full"
+        onClick={handleUpgrade}
+        disabled={upgradeLoading}
+      >
+        <CreditCard size={16} />
+        {upgradeLoading ? 'Redirecting...' : 'Upgrade to PRO'}
+      </button>
+    </div>
+  );
+}
 
 export function ProfilePage() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -98,6 +130,10 @@ export function ProfilePage() {
 
       <section className="profile-page__settings">
         <h3>{t('profile.settings')}</h3>
+
+        {user?.plan === 'FREE' && (
+          <UpgradeButton />
+        )}
 
         <div className="settings-group">
           <h4 className="settings-group__title">{t('profile.ui_language')}</h4>

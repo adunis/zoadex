@@ -17,6 +17,12 @@ import { RegionsPage } from './pages/RegionsPage';
 import { RegionDetailPage } from './pages/RegionDetailPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
+import { ResetPasswordPage } from './pages/ResetPasswordPage';
+import { VerifyEmailPage } from './pages/VerifyEmailPage';
+import { SpeciesDetailPage } from './pages/SpeciesDetailPage';
+import { EmailVerificationBanner } from './components/auth/EmailVerificationBanner';
+import { InstallPrompt } from './components/pwa/InstallPrompt';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,9 +61,14 @@ function App() {
           <LanguageProvider>
             <BrowserRouter>
             <DemoBanner />
+            <InstallPrompt />
+            <EmailVerificationBanner />
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/verify-email" element={<VerifyEmailPage />} />
               <Route element={<Layout />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/map" element={<MapPage />} />
@@ -70,6 +81,7 @@ function App() {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/regions" element={<RegionsPage />} />
                 <Route path="/regions/:id" element={<RegionDetailPage />} />
+                <Route path="/species/:id" element={<SpeciesDetailPage />} />
               </Route>
             </Routes>
           </BrowserRouter>

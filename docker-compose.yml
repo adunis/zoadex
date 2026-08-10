@@ -4,11 +4,46 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: zoadex
-      POSTGRES_USER: zoadex
-      POSTGRES_PASSWORD: zoadex
+      POSTGRES_DB: ${POSTGRES_DB:-zoadex}
+      POSTGRES_USER: ${POSTGRES_USER:-zoadex}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zoadex}
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zoadex}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./zoadex-api
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-zoadex}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-zoadex}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-zoadex}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./zoadex-web
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - api
 
 volumes:
   pgdata:
+  uploads:
