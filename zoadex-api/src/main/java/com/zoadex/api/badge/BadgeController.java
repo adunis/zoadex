@@ -6,9 +6,7 @@ import com.zoadex.api.badge.dto.UserBadgeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,8 +24,25 @@ public class BadgeController {
     }
 
     /**
-     * GET /api/v1/badges/my
+     * GET /api/v1/badges/all - returns all badges with unlock status for the authenticated user
      */
+    @GetMapping("/all")
+    public ResponseEntity<List<BadgeResponse>> getAllBadgesWithStatus(Authentication authentication) {
+        UUID userId = (UUID) authentication.getPrincipal();
+        return ResponseEntity.ok(badgeService.getAllBadgesWithStatus(userId));
+    }
+
+    /**
+     * GET /api/v1/badges/region/{regionId} - returns badges specific to a region
+     */
+    @GetMapping("/region/{regionId}")
+    public ResponseEntity<List<BadgeResponse>> getRegionBadges(
+            @PathVariable UUID regionId,
+            Authentication authentication) {
+        UUID userId = (UUID) authentication.getPrincipal();
+        return ResponseEntity.ok(badgeService.getRegionBadgesWithStatus(userId, regionId));
+    }
+
     @GetMapping("/my")
     public ResponseEntity<List<UserBadgeResponse>> getUserBadges(Authentication authentication) {
         UUID userId = (UUID) authentication.getPrincipal();

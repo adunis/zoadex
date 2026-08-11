@@ -1,4 +1,4 @@
-import { Award, Eye, LogOut, MapPin, Calendar, Flame, CreditCard, Star } from 'lucide-react';
+import { Award, Eye, LogOut, MapPin, Calendar, Flame, CreditCard, Star, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../hooks/useAuth';
@@ -115,6 +115,29 @@ export function ProfilePage() {
       </div>
 
       
+      
+      {/* Friends */}
+      <div className="profile-page__friends-link" onClick={() => navigate('/friends')} role="button" tabIndex={0}>
+        <Users size={20} />
+        <span>Friends &amp; Nearby Explorers</span>
+        <span className="profile-page__friends-chevron">&rsaquo;</span>
+      </div>
+      {/* Badges */}
+      <section className="profile-page__badges">
+        <div className="profile-page__badges-header">
+          <h3>Badges</h3>
+          <a href="/badges" className="btn btn--small btn--secondary">View All</a>
+        </div>
+        {displayBadges.length > 0 ? (
+          <div className="badges-grid">
+            {displayBadges.map((badge) => (
+              <BadgeCard key={badge.badge.id} badge={badge} />
+            ))}
+          </div>
+        ) : (
+          <p className="profile-page__badges-empty">No badges yet. Start exploring to earn them!</p>
+        )}
+      </section>
       {/* XP Progress */}
       <div className="profile-page__xp">
         <div className="profile-page__xp-header">
@@ -132,19 +155,6 @@ export function ProfilePage() {
           {user?.xpInCurrentLevel ?? 0} / {user?.xpNeededForNext ?? 100} XP to next level
         </p>
       </div>
-      {displayBadges.length > 0 && (
-        <section className="profile-page__badges">
-          <div className="profile-page__badges-header">
-            <h3>Badge Showcase</h3>
-            <a href="/badges" className="btn btn--small btn--secondary">View All</a>
-          </div>
-          <div className="badges-grid">
-            {displayBadges.map((badge) => (
-              <BadgeCard key={badge.badge.id} badge={badge} />
-            ))}
-          </div>
-        </section>
-      )}
 
       <section className="profile-page__settings">
         <h3>{t('profile.settings')}</h3>

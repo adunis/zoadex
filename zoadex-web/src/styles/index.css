@@ -4430,3 +4430,282 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Notification bell is positioned fixed via .notification-bell class */
+
+/* Friends link card */
+.profile-page__friends-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.profile-page__friends-link:hover {
+  transform: translateX(4px);
+}
+
+.profile-page__friends-chevron {
+  margin-left: auto;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+}
+
+.profile-page__badges-empty {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 1rem;
+}
+
+
+/* === Map Page Tools (Paint / Note) === */
+.map-page__tools {
+  position: absolute;
+  top: 60px;
+  right: 12px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-white);
+  padding: 4px 8px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-elevated);
+}
+
+.map-page__tools-counter {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.map-controls__paint-btn,
+.map-controls__note-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.map-controls__paint-btn:hover,
+.map-controls__note-btn:hover {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.map-controls__paint-btn--active {
+  background: #e8f5e9;
+  border-color: #4CAF50;
+  color: #2e7d32;
+}
+
+.map-controls__note-btn--active {
+  background: #fff3e0;
+  border-color: #ff9800;
+  color: #e65100;
+}
+
+/* === Explored Grid Cells === */
+.explored-cell {
+  pointer-events: none;
+}
+
+/* === Map Note Marker === */
+.map-note-marker {
+  background: none !important;
+  border: none !important;
+}
+
+.map-note-marker__pin {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background: #ff9800;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.map-note-marker__pin::after {
+  content: '';
+  display: block;
+  transform: rotate(45deg);
+}
+
+/* === Map Note Popup === */
+.map-note-popup__content {
+  max-width: 220px;
+}
+
+.map-note-popup__title {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.map-note-popup__text {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.map-note-popup__media {
+  width: 100%;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin-bottom: 4px;
+}
+
+.map-note-popup__date {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+}
+
+/* === Map Note Form Modal === */
+.map-note-form {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-note-form__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.map-note-form__modal {
+  position: relative;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: var(--shadow-elevated);
+}
+
+.map-note-form__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.map-note-form__header h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.map-note-form__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: var(--color-background);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: background 0.15s;
+}
+
+.map-note-form__close:hover {
+  background: var(--color-border);
+}
+
+.map-note-form__coords {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin: 0.5rem 0;
+}
+
+/* === Sighting Form Clear Species Button === */
+.sighting-form__clear-species {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: var(--color-secondary);
+  color: var(--color-white);
+  border-radius: 50%;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background 0.15s;
+  vertical-align: middle;
+}
+
+.sighting-form__clear-species:hover {
+  background: var(--color-secondary-dark);
+}
+
+/* === Discover Page Selected Species === */
+.discover-page__selected-species {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--color-secondary-light);
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-secondary-dark);
+}
+
+/* Badge cards - locked state */
+.badge-card--locked {
+  opacity: 0.5;
+  filter: grayscale(100%);
+  position: relative;
+}
+
+.badge-card--locked .badge-card__icon--locked {
+  color: var(--text-muted);
+}
+
+.badge-card--earned {
+  border-left: 3px solid #f59e0b;
+}
+
+.badge-card__description {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: block;
+}
+
+.badges-page__locked-category {
+  margin-bottom: 1rem;
+}
+
+.badges-page__locked-category-title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}

@@ -33,4 +33,9 @@ export const badgeService = {
       mockBadgeProgress,
     );
   },
+
+  async getAllWithStatus(): Promise<import('../types/badge').BadgeWithStatus[]> {
+    const response = await api.get<import('../types/badge').BadgeWithStatus[]>('/badges/all');
+    return response.data;
+  },
 };

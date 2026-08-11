@@ -51,6 +51,9 @@ public class Badge {
     @Column(nullable = false, columnDefinition = "jsonb")
     private Map<String, Object> criteria;
 
+    @Column(name = "region_id")
+    private UUID regionId;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 

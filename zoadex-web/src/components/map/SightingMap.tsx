@@ -49,6 +49,7 @@ interface SightingMapProps {
   regions?: Region[];
   currentRegionId?: string;
   onSwitchRegion?: (regionId: string) => void;
+  children?: React.ReactNode;
 }
 
 function MapController({ center, zoom }: { center: [number, number]; zoom: number }) {
@@ -85,6 +86,7 @@ export function SightingMap({
   regions,
   currentRegionId,
   onSwitchRegion,
+  children,
 }: SightingMapProps) {
   return (
     <div className="sighting-map-wrapper">
@@ -144,6 +146,7 @@ export function SightingMap({
           </Marker>
         ))}
         {showCrosshair && <CrosshairMarker />}
+        {children}
 
       </MapContainer>
     </div>

@@ -15,6 +15,18 @@ export interface Badge {
   requirement: number;
 }
 
+export interface BadgeWithStatus {
+  id: string;
+  name: string;
+  description: string;
+  iconUrl?: string;
+  category: string;
+  tier: string;
+  regionId?: string;
+  unlocked: boolean;
+  unlockedAt?: string;
+}
+
 export interface UserBadge {
   badge: Badge;
   earnedAt: string;

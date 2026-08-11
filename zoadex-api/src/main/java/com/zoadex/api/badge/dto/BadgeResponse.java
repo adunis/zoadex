@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -21,4 +22,7 @@ public class BadgeResponse {
     private String category;
     private String tier;
     private Map<String, Object> criteria;
+    private UUID regionId;
+    private boolean unlocked;
+    private LocalDateTime unlockedAt;
 }

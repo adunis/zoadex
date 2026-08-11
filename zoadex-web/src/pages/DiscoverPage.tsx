@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, CheckCircle, Award } from 'lucide-react';
+import { Search, CheckCircle, Award, X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { SightingForm } from '../components/sighting/SightingForm';
 import { SuggestionList } from '../components/sighting/SuggestionList';
@@ -129,6 +129,18 @@ export function DiscoverPage() {
             aria-label="Search species"
           />
         </div>
+        {selectedSpecies && (
+          <div className="discover-page__selected-species">
+            <span>✓ {selectedSpecies.name}</span>
+            <button
+              className="sighting-form__clear-species"
+              onClick={() => setSelectedSpecies(null)}
+              aria-label="Clear selected species"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        )}
       </div>
 
       {!selectedSpecies && searchQuery.length < 2 && (
@@ -142,6 +154,7 @@ export function DiscoverPage() {
         onSubmit={handleSubmit}
         speciesOptions={speciesOptions}
         selectedSpecies={selectedSpecies}
+        onClearSpecies={() => setSelectedSpecies(null)}
         expedition={expedition}
       />
     </div>

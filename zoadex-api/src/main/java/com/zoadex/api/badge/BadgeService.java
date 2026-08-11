@@ -6,8 +6,8 @@ import com.zoadex.api.badge.dto.UserBadgeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +20,35 @@ public class BadgeService {
 
     public List<BadgeResponse> getAllBadges() {
         return badgeRepository.findAll().stream()
-                .map(this::toBadgeResponse)
+                .map(b -> toBadgeResponse(b, false, null))
+                .collect(Collectors.toList());
+    }
+
+    public List<BadgeResponse> getAllBadgesWithStatus(UUID userId) {
+        List<Badge> allBadges = badgeRepository.findAll();
+        Set<UUID> unlockedBadgeIds = userBadgeRepository.findByUserId(userId).stream()
+                .map(UserBadge::getBadgeId)
+                .collect(Collectors.toSet());
+
+        Map<UUID, LocalDateTime> unlockTimes = userBadgeRepository.findByUserId(userId).stream()
+                .collect(Collectors.toMap(UserBadge::getBadgeId, UserBadge::getUnlockedAt));
+
+        return allBadges.stream()
+                .map(b -> toBadgeResponse(b, unlockedBadgeIds.contains(b.getId()), unlockTimes.get(b.getId())))
+                .collect(Collectors.toList());
+    }
+
+    public List<BadgeResponse> getRegionBadgesWithStatus(UUID userId, UUID regionId) {
+        List<Badge> regionBadges = badgeRepository.findByRegionId(regionId);
+        Set<UUID> unlockedBadgeIds = userBadgeRepository.findByUserId(userId).stream()
+                .map(UserBadge::getBadgeId)
+                .collect(Collectors.toSet());
+
+        Map<UUID, LocalDateTime> unlockTimes = userBadgeRepository.findByUserId(userId).stream()
+                .collect(Collectors.toMap(UserBadge::getBadgeId, UserBadge::getUnlockedAt));
+
+        return regionBadges.stream()
+                .map(b -> toBadgeResponse(b, unlockedBadgeIds.contains(b.getId()), unlockTimes.get(b.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -42,7 +70,7 @@ public class BadgeService {
                 .collect(Collectors.toList());
     }
 
-    private BadgeResponse toBadgeResponse(Badge badge) {
+    private BadgeResponse toBadgeResponse(Badge badge, boolean unlocked, LocalDateTime unlockedAt) {
         return BadgeResponse.builder()
                 .id(badge.getId())
                 .name(badge.getName())
@@ -51,6 +79,9 @@ public class BadgeService {
                 .category(badge.getCategory())
                 .tier(badge.getTier())
                 .criteria(badge.getCriteria())
+                .regionId(badge.getRegionId())
+                .unlocked(unlocked)
+                .unlockedAt(unlockedAt)
                 .build();
     }
 

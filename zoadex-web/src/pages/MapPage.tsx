@@ -1,7 +1,10 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Paintbrush, StickyNote } from 'lucide-react';
 import { SightingMap } from '../components/map/SightingMap';
+import { ExploredGrid } from '../components/map/ExploredGrid';
+import { MapNotes, MapNoteForm } from '../components/map/MapNotes';
 import { RegionPickerModal } from '../components/map/RegionPickerModal';
 import { CountryFlag } from '../components/common/CountryFlag';
 import { mapService } from '../services/mapService';
@@ -13,7 +16,7 @@ import { useActiveRegion } from '../hooks/useActiveRegion';
 import { useLanguageContext } from '../context/LanguageContext';
 import { ALL_CATEGORIES, ANIMAL_CATEGORIES, PLANT_CATEGORIES, getCategoryEmoji, getCategoryLabel, CATEGORY_DETECTION_RADIUS } from '../constants/categories';
 import { HeatmapPoint } from '../types/map';
-import { computeRarityThresholds, getRarity, getRarityLabel, matchesRarityFilter } from '../utils/rarity';
+import { computeRarityThresholds, getRarity, getRarityLabel } from '../utils/rarity';
 import { getRegionPalette, applyPalette, extractPaletteFromFlag } from '../utils/regionPalettes';
 
 type CategoryFilter = 'ALL' | 'ANIMALS' | 'PLANTS_MUSHROOMS' | string;
@@ -30,9 +33,12 @@ export function MapPage() {
   const [showMySightings, setShowMySightings] = useState(isAuthenticated);
   const [speciesAtCursor, setSpeciesAtCursor] = useState<string[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<CategoryFilter | null>(null);
-  const [rarityFilter, setRarityFilter] = useState<'ALL' | 'RARE' | 'UNCOMMON' | 'COMMON'>('ALL');
   const [viewedRegionId, setViewedRegionId] = useState<string | null>(null);
   const [showRegionPicker, setShowRegionPicker] = useState(false);
+  const [paintMode, setPaintMode] = useState(false);
+  const [addNoteMode, setAddNoteMode] = useState(false);
+  const [exploredCellCount, setExploredCellCount] = useState(0);
+  const [noteFormCoords, setNoteFormCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   // The region being displayed on map (viewed or active)
   const displayRegion = viewedRegionId
@@ -70,7 +76,6 @@ export function MapPage() {
   // Restore map state from URL params on mount
   useEffect(() => {
     const categoriesParam = searchParams.get('categories');
-    const rarityParam = searchParams.get('rarity');
 
     if (categoriesParam) {
       const cats = categoriesParam.split(',');
@@ -85,18 +90,13 @@ export function MapPage() {
         setSelectedFilter(cats[0]);
       }
     }
-    if (rarityParam) {
-      setRarityFilter(rarityParam as 'ALL' | 'RARE' | 'UNCOMMON' | 'COMMON');
-    }
+
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function navigateToExplore(id: string) {
     const mapStateParams = new URLSearchParams();
     if (selectedFilter) {
       mapStateParams.set('categories', [...selectedCategories].join(','));
-    }
-    if (rarityFilter !== 'ALL') {
-      mapStateParams.set('rarity', rarityFilter);
     }
     const returnUrl = `/map?${mapStateParams.toString()}`;
     navigate(`/explore?speciesId=${id}&fromMap=true&returnUrl=${encodeURIComponent(returnUrl)}`);
@@ -199,16 +199,8 @@ export function MapPage() {
       clusterSize: p.clusterSize,
       radiusKm: p.radiusKm,
     }));
-
-    // Apply rarity filter
-    if (rarityFilter !== 'ALL') {
-      points = points.filter(p => {
-        const info = speciesLookup.get(p.speciesId ?? '');
-        return matchesRarityFilter(info?.occurrenceCount, rarityFilter, rarityThresholds);
-      });
-    }
     return points;
-  }, [focusSpeciesId, heatmapPoints, selectedCategories, categoryPoints, rarityFilter, speciesLookup, rarityThresholds]);
+  }, [focusSpeciesId, heatmapPoints, selectedCategories, categoryPoints, speciesLookup, rarityThresholds]);
 
   const clusterInfoMap = useMemo(() => {
     const map = new Map<string, { clusterSize: number }>();
@@ -226,6 +218,19 @@ export function MapPage() {
   function clearSpeciesFocus() {
     setSearchParams({});
   }
+
+  const handleCellPainted = useCallback(() => {
+    setExploredCellCount(prev => prev + 1);
+  }, []);
+
+  const handleOpenNoteForm = useCallback((lat: number, lng: number) => {
+    setNoteFormCoords({ lat, lng });
+    setAddNoteMode(false);
+  }, []);
+
+  const handleNoteSubmitted = useCallback(() => {
+    setNoteFormCoords(null);
+  }, []);
 
   return (
     <div className="page map-page">
@@ -257,6 +262,29 @@ export function MapPage() {
           onClose={() => setShowRegionPicker(false)}
         />
       )}
+
+      {/* Map tools */}
+      <div className="map-page__tools">
+        <button
+          className={`map-controls__paint-btn ${paintMode ? 'map-controls__paint-btn--active' : ''}`}
+          onClick={() => { setPaintMode(prev => !prev); setAddNoteMode(false); }}
+          aria-pressed={paintMode}
+          title="Paint explored cells"
+        >
+          <Paintbrush size={18} />
+        </button>
+        <button
+          className={`map-controls__note-btn ${addNoteMode ? 'map-controls__note-btn--active' : ''}`}
+          onClick={() => { setAddNoteMode(prev => !prev); setPaintMode(false); }}
+          aria-pressed={addNoteMode}
+          title="Add map note"
+        >
+          <StickyNote size={18} />
+        </button>
+        {exploredCellCount > 0 && (
+          <span className="map-page__tools-counter">{exploredCellCount} explored</span>
+        )}
+      </div>
 
       {focusSpeciesName && (
         <div className="map-page__species-focus">
@@ -321,21 +349,6 @@ export function MapPage() {
         </div>
       )}
 
-      {!focusSpeciesId && selectedCategories.size > 0 && (
-        <div className="map-page__rarity-filters">
-          {([['ALL', '🌍 All'], ['RARE', '✨ Rare'], ['UNCOMMON', '🟡 Uncommon'], ['COMMON', '🟢 Common']] as const).map(([value, label]) => (
-            <button
-              key={value}
-              className={`map-rarity-pill ${rarityFilter === value ? 'map-rarity-pill--active' : ''}`}
-              onClick={() => setRarityFilter(value)}
-              aria-pressed={rarityFilter === value}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      )}
-
       <div className="map-page__body">
         <div className="map-page__map-wrapper">
           {(isLoadingHeatmap || isLoadingPoints) && selectedCategories.size > 0 && (
@@ -366,7 +379,18 @@ export function MapPage() {
               regions={regions}
               currentRegionId={displayRegionId ?? undefined}
               onSwitchRegion={(id) => setViewedRegionId(id)}
-            />
+            >
+              <ExploredGrid
+                regionId={displayRegionId}
+                paintMode={paintMode}
+                onCellPainted={handleCellPainted}
+              />
+              <MapNotes
+                regionId={displayRegionId}
+                addNoteMode={addNoteMode}
+                onOpenNoteForm={handleOpenNoteForm}
+              />
+            </SightingMap>
           </div>
           {selectedCategories.size === 0 && !focusSpeciesId && (
             <div className="map-page__discover-hint">
@@ -521,6 +545,17 @@ export function MapPage() {
           );
         })()}
       </div>
+
+      {/* Note form modal */}
+      {noteFormCoords && displayRegionId && (
+        <MapNoteForm
+          latitude={noteFormCoords.lat}
+          longitude={noteFormCoords.lng}
+          regionId={displayRegionId}
+          onClose={() => setNoteFormCoords(null)}
+          onSubmitted={handleNoteSubmitted}
+        />
+      )}
     </div>
   );
 }

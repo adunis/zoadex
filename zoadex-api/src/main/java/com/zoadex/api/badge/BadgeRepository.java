@@ -12,4 +12,8 @@ public interface BadgeRepository extends JpaRepository<Badge, UUID> {
     List<Badge> findByCategory(String category);
 
     List<Badge> findByTier(String tier);
+
+    List<Badge> findByRegionId(UUID regionId);
+
+    List<Badge> findByRegionIdIsNull();
 }

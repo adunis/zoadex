@@ -1,14 +1,12 @@
 import { FormEvent, useState, ChangeEvent, useRef, useEffect } from 'react';
-import { MapPin, Calendar, Camera, Compass } from 'lucide-react';
+import { MapPin, Calendar, Camera, Compass, X } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { useQuery } from '@tanstack/react-query';
 import { useGeolocation } from '../../hooks/useGeolocation';
 import { useActiveRegion } from '../../hooks/useActiveRegion';
 import { regionService } from '../../services/regionService';
-import { suggestionService } from '../../services/suggestionService';
 import { Expedition } from '../../types/sighting';
-import { Suggestion } from '../../types/suggestion';
 
 interface SightingFormProps {
   onSubmit: (data: {
@@ -22,6 +20,7 @@ interface SightingFormProps {
   }) => void;
   speciesOptions: { id: string; name: string }[];
   selectedSpecies?: { id: string; name: string } | null;
+  onClearSpecies?: () => void;
   expedition?: Expedition | null;
 }
 
@@ -55,7 +54,7 @@ function DraggableMarker({ position, onPositionChange }: {
   );
 }
 
-export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, expedition }: SightingFormProps) {
+export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, onClearSpecies, expedition }: SightingFormProps) {
   const { latitude, longitude, requestLocation, loading: geoLoading } = useGeolocation();
   const { regionCenter, activeRegionId } = useActiveRegion();
   const [speciesId, setSpeciesId] = useState(selectedSpecies?.id ?? '');
@@ -67,7 +66,6 @@ export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, expedi
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [latitudeInput, setLatitudeInput] = useState('');
   const [longitudeInput, setLongitudeInput] = useState('');
-  const [mapSuggestions, setMapSuggestions] = useState<Suggestion[]>([]);
   const [locationError, setLocationError] = useState<string | null>(null);
 
   const { data: boundary } = useQuery({
@@ -110,36 +108,13 @@ export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, expedi
   const effectiveLat = latitudeInput ? parseFloat(latitudeInput) : (latitude ?? null);
   const effectiveLon = longitudeInput ? parseFloat(longitudeInput) : (longitude ?? null);
 
-  // Auto-fetch suggestions when location is available
-  useEffect(() => {
-    if (effectiveLat != null && effectiveLon != null) {
-      const fetchSuggestions = async () => {
-        try {
-          const suggestions = await suggestionService.getSuggestions(
-            effectiveLat, effectiveLon, dateTime
-          );
-          setMapSuggestions(suggestions);
-        } catch {
-          // ignore
-        }
-      };
-      fetchSuggestions();
-    }
-  }, [effectiveLat, effectiveLon]); // re-fetch when location changes
-
   const mapCenter: [number, number] = effectiveLat != null && effectiveLon != null
     ? [effectiveLat, effectiveLon]
     : regionCenter;
 
-  async function handleMarkerMove(lat: number, lng: number) {
+  function handleMarkerMove(lat: number, lng: number) {
     setLatitudeInput(lat.toFixed(6));
     setLongitudeInput(lng.toFixed(6));
-    try {
-      const suggestions = await suggestionService.getSuggestions(lat, lng, dateTime);
-      setMapSuggestions(suggestions);
-    } catch {
-      // ignore suggestion fetch errors
-    }
   }
 
   const handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -177,6 +152,16 @@ export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, expedi
           <label>Species</label>
           <div className="sighting-form__selected-species">
             <strong>{selectedSpecies.name}</strong>
+            {onClearSpecies && (
+              <button
+                type="button"
+                className="sighting-form__clear-species"
+                onClick={onClearSpecies}
+                aria-label="Clear selected species"
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
         </div>
       ) : (
@@ -195,23 +180,6 @@ export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, expedi
               </option>
             ))}
           </select>
-          {mapSuggestions.length > 0 && (
-            <ul className="sighting-form__map-suggestions">
-              <li className="sighting-form__map-suggestions-label">📍 Suggested at this location:</li>
-              {mapSuggestions.slice(0, 5).map((s) => (
-                <li
-                  key={s.speciesId}
-                  className="sighting-form__map-suggestion-item"
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setSpeciesId(s.speciesId)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSpeciesId(s.speciesId); }}
-                >
-                  {s.commonName ?? s.scientificName}
-                </li>
-              ))}
-            </ul>
-          )}
         </div>
       )}
 
