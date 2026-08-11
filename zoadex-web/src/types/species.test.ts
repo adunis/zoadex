@@ -22,8 +22,8 @@ describe('getMacroCategory', () => {
     expect(getMacroCategory(SpeciesCategory.FISH)).toBe('ANIMALS');
   });
 
-  it('maps INSECTS to ANIMALS', () => {
-    expect(getMacroCategory(SpeciesCategory.INSECTS)).toBe('ANIMALS');
+  it('maps INVERTEBRATES to ANIMALS', () => {
+    expect(getMacroCategory(SpeciesCategory.INVERTEBRATES)).toBe('ANIMALS');
   });
 
   it('maps TREES to PLANTS', () => {
@@ -43,7 +43,7 @@ describe('SpeciesCategory enum', () => {
   it('has all expected enum values', () => {
     expect(SpeciesCategory.BIRDS).toBe('BIRDS');
     expect(SpeciesCategory.MAMMALS).toBe('MAMMALS');
-    expect(SpeciesCategory.INSECTS).toBe('INSECTS');
+    expect(SpeciesCategory.INVERTEBRATES).toBe('INVERTEBRATES');
     expect(SpeciesCategory.REPTILES).toBe('REPTILES');
     expect(SpeciesCategory.AMPHIBIANS).toBe('AMPHIBIANS');
     expect(SpeciesCategory.FISH).toBe('FISH');

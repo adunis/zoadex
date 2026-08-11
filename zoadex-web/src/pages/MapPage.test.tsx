@@ -68,7 +68,7 @@ describe('MapPage', () => {
     expect(screen.getByText(/Mammals/)).toBeInTheDocument();
     expect(screen.getByText(/Reptiles/)).toBeInTheDocument();
     expect(screen.getByText(/Amphibians/)).toBeInTheDocument();
-    expect(screen.getByText(/Insects/)).toBeInTheDocument();
+    expect(screen.getByText(/Invertebrates/)).toBeInTheDocument();
     expect(screen.getByText(/Plants/)).toBeInTheDocument();
     expect(screen.getByText(/Trees/)).toBeInTheDocument();
     expect(screen.getByText(/Mushrooms/)).toBeInTheDocument();

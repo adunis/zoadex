@@ -43,7 +43,7 @@ public class ImageResolutionService {
             SpeciesCategory.REPTILES, "https://via.placeholder.com/400x300/8FBC8F/000?text=Reptile",
             SpeciesCategory.AMPHIBIANS, "https://via.placeholder.com/400x300/5F9EA0/000?text=Amphibian",
             SpeciesCategory.FISH, "https://via.placeholder.com/400x300/4682B4/000?text=Fish",
-            SpeciesCategory.INSECTS, "https://via.placeholder.com/400x300/DAA520/000?text=Insect",
+            SpeciesCategory.INVERTEBRATES, "https://via.placeholder.com/400x300/DAA520/000?text=Invertebrate",
             SpeciesCategory.MUSHROOMS, "https://via.placeholder.com/400x300/CD853F/000?text=Mushroom",
             SpeciesCategory.TREES, "https://via.placeholder.com/400x300/228B22/000?text=Tree",
             SpeciesCategory.PLANTS, "https://via.placeholder.com/400x300/32CD32/000?text=Plant"

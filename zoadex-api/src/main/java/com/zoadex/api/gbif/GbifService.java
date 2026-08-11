@@ -87,8 +87,8 @@ public class GbifService {
         collectSpeciesKeys(wkt, perGroup / 2, "&taxonKey=358", allSpeciesKeys, gbifCounts);
         // Amphibians
         collectSpeciesKeys(wkt, perGroup / 2, "&taxonKey=131", allSpeciesKeys, gbifCounts);
-        // Insects
-        collectSpeciesKeys(wkt, perGroup, "&taxonKey=216", allSpeciesKeys, gbifCounts);
+        // Invertebrates (Arthropoda phylum - includes insects, arachnids, crustaceans)
+        collectSpeciesKeys(wkt, perGroup, "&taxonKey=54", allSpeciesKeys, gbifCounts);
         // Fish (Actinopterygii)
         collectSpeciesKeys(wkt, perGroup / 2, "&taxonKey=204", allSpeciesKeys, gbifCounts);
         // Plants (Plantae kingdom)
@@ -346,17 +346,23 @@ public class GbifService {
     // package-private for testing
     SpeciesCategory mapToCategory(String kingdom, String clazz, String order, String family) {
         if ("Animalia".equals(kingdom)) {
-            if (clazz == null || clazz.isEmpty()) return SpeciesCategory.INSECTS;
+            if (clazz == null || clazz.isEmpty()) return SpeciesCategory.INVERTEBRATES;
             return switch (clazz) {
                 case "Aves" -> SpeciesCategory.BIRDS;
                 case "Mammalia" -> SpeciesCategory.MAMMALS;
-                // Reptiles - GBIF uses order-level class names
+                // Reptiles
                 case "Reptilia", "Squamata", "Testudines", "Crocodilia", "Rhynchocephalia" -> SpeciesCategory.REPTILES;
                 case "Amphibia" -> SpeciesCategory.AMPHIBIANS;
-                // Fish - various classes
-                case "Actinopterygii", "Chondrichthyes", "Elasmobranchii", "Cephalaspidomorphi", "Sarcopterygii" -> SpeciesCategory.FISH;
-                case "Insecta", "Arachnida", "Chilopoda", "Diplopoda" -> SpeciesCategory.INSECTS;
-                default -> SpeciesCategory.INSECTS;
+                // Fish - all aquatic vertebrate classes
+                case "Actinopterygii", "Chondrichthyes", "Elasmobranchii", "Cephalaspidomorphi",
+                     "Sarcopterygii", "Myxini", "Petromyzonti" -> SpeciesCategory.FISH;
+                // Invertebrates - insects, arachnids (incl. sea spiders), crustaceans, mollusks, etc.
+                case "Insecta", "Arachnida", "Chilopoda", "Diplopoda", "Gastropoda", "Bivalvia",
+                     "Malacostraca", "Copepoda", "Branchiopoda", "Merostomata", "Pycnogonida",
+                     "Anthozoa", "Asteroidea", "Polychaeta", "Eurotatoria", "Cephalopoda",
+                     "Maxillopoda", "Ostracoda", "Ophiuroidea", "Echinoidea", "Holothuroidea",
+                     "Scyphozoa", "Hydrozoa" -> SpeciesCategory.INVERTEBRATES;
+                default -> SpeciesCategory.INVERTEBRATES;
             };
         }
         if ("Fungi".equals(kingdom)) {

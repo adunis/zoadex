@@ -105,13 +105,13 @@ describe('mapService', () => {
     it('appends multiple categories as repeated params', async () => {
       mockedApi.get.mockResolvedValueOnce({ data: [] });
 
-      await mapService.getOccurrencePoints('region-1', ['MAMMALS', 'INSECTS']);
+      await mapService.getOccurrencePoints('region-1', ['MAMMALS', 'INVERTEBRATES']);
 
       expect(mockedApi.get).toHaveBeenCalledWith(
         expect.stringContaining('categories=MAMMALS'),
       );
       expect(mockedApi.get).toHaveBeenCalledWith(
-        expect.stringContaining('categories=INSECTS'),
+        expect.stringContaining('categories=INVERTEBRATES'),
       );
     });
 

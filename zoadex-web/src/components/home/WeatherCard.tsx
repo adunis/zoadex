@@ -85,7 +85,7 @@ function getCategoryEmoji(category?: SpeciesCategory | string): string {
       return '🦎';
     case 'AMPHIBIANS':
       return '🐸';
-    case 'INSECTS':
+    case 'INVERTEBRATES':
       return '🐛';
     case 'PLANTS':
       return '🌿';

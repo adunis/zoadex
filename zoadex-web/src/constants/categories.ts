@@ -9,14 +9,14 @@ export const ALL_CATEGORIES: CategoryConfig[] = [
   { id: 'MAMMALS', emoji: '🐾', label: 'Mammals' },
   { id: 'REPTILES', emoji: '🦎', label: 'Reptiles' },
   { id: 'AMPHIBIANS', emoji: '🐸', label: 'Amphibians' },
-  { id: 'INSECTS', emoji: '🐛', label: 'Insects' },
+  { id: 'INVERTEBRATES', emoji: '🐛', label: 'Invertebrates' },
   { id: 'PLANTS', emoji: '🌿', label: 'Plants' },
   { id: 'TREES', emoji: '🌲', label: 'Trees' },
   { id: 'MUSHROOMS', emoji: '🍄', label: 'Mushrooms' },
   { id: 'FISH', emoji: '🐟', label: 'Fish' },
 ];
 
-export const ANIMAL_CATEGORIES = ['BIRDS', 'MAMMALS', 'REPTILES', 'AMPHIBIANS', 'FISH', 'INSECTS'];
+export const ANIMAL_CATEGORIES = ['BIRDS', 'MAMMALS', 'REPTILES', 'AMPHIBIANS', 'FISH', 'INVERTEBRATES'];
 export const PLANT_CATEGORIES = ['PLANTS', 'TREES', 'MUSHROOMS'];
 
 export function getCategoryEmoji(category: string): string {
@@ -39,7 +39,7 @@ export const CATEGORY_DETECTION_RADIUS: Record<string, number> = {
   REPTILES:   0.05,   // ~5km  - habitat specific
   AMPHIBIANS: 0.03,   // ~3km  - very habitat-specific (ponds, streams)
   FISH:       0.03,   // ~3km  - tied to specific water bodies
-  INSECTS:    0.03,   // ~3km  - very local
+  INVERTEBRATES:    0.03,   // ~3km  - very local
   PLANTS:     0.02,   // ~2km  - fixed location
   TREES:      0.02,   // ~2km  - fixed location
   MUSHROOMS:  0.03,   // ~3km  - very habitat-specific

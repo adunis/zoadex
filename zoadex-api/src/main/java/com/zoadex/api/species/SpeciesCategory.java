@@ -3,7 +3,7 @@ package com.zoadex.api.species;
 public enum SpeciesCategory {
     BIRDS,
     MAMMALS,
-    INSECTS,
+    INVERTEBRATES,
     REPTILES,
     AMPHIBIANS,
     FISH,
