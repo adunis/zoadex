@@ -263,28 +263,30 @@ export function MapPage() {
         />
       )}
 
-      {/* Map tools */}
-      <div className="map-page__tools">
-        <button
-          className={`map-controls__paint-btn ${paintMode ? 'map-controls__paint-btn--active' : ''}`}
-          onClick={() => { setPaintMode(prev => !prev); setAddNoteMode(false); }}
-          aria-pressed={paintMode}
-          title="Paint explored cells"
-        >
-          <Paintbrush size={18} />
-        </button>
-        <button
-          className={`map-controls__note-btn ${addNoteMode ? 'map-controls__note-btn--active' : ''}`}
-          onClick={() => { setAddNoteMode(prev => !prev); setPaintMode(false); }}
-          aria-pressed={addNoteMode}
-          title="Add map note"
-        >
-          <StickyNote size={18} />
-        </button>
-        {exploredCellCount > 0 && (
-          <span className="map-page__tools-counter">{exploredCellCount} explored</span>
-        )}
-      </div>
+      {/* Map tools - bottom left */}
+      {!isViewingOtherRegion && isAuthenticated && (
+        <div className="map-page__tools">
+          <button
+            className={`map-page__tool-btn ${paintMode ? 'map-page__tool-btn--active' : ''}`}
+            onClick={() => { setPaintMode(prev => !prev); setAddNoteMode(false); }}
+            aria-pressed={paintMode}
+          >
+            <Paintbrush size={20} />
+            <span className="map-page__tool-label">Mark as Explored</span>
+          </button>
+          <button
+            className={`map-page__tool-btn ${addNoteMode ? 'map-page__tool-btn--active' : ''}`}
+            onClick={() => { setAddNoteMode(prev => !prev); setPaintMode(false); }}
+            aria-pressed={addNoteMode}
+          >
+            <StickyNote size={20} />
+            <span className="map-page__tool-label">Add a Note</span>
+          </button>
+          {exploredCellCount > 0 && (
+            <span className="map-page__tools-counter">{exploredCellCount} cells</span>
+          )}
+        </div>
+      )}
 
       {focusSpeciesName && (
         <div className="map-page__species-focus">

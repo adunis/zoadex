@@ -4465,16 +4465,13 @@ h1, h2, h3, h4, h5, h6 {
 /* === Map Page Tools (Paint / Note) === */
 .map-page__tools {
   position: absolute;
-  top: 60px;
-  right: 12px;
+  bottom: 90px;
+  left: 12px;
   z-index: 1000;
   display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--color-white);
-  padding: 4px 8px;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-elevated);
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
 }
 
 .map-page__tools-counter {
@@ -4763,4 +4760,37 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   gap: 0.4rem;
   font-weight: 700;
+}
+
+.map-page__tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+  color: #333;
+}
+
+.map-page__tool-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+}
+
+.map-page__tool-btn--active {
+  background: #2d6a4f;
+  color: #fff;
+  border-color: #2d6a4f;
+  box-shadow: 0 3px 12px rgba(45,106,79,0.4);
+}
+
+.map-page__tool-label {
+  white-space: nowrap;
+  font-size: 0.75rem;
 }
