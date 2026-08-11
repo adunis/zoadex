@@ -131,6 +131,12 @@ export function SightingForm({ onSubmit, speciesOptions, expedition }: SightingF
     const finalSpeciesId = speciesId;
     if (!finalSpeciesId || effectiveLat == null || effectiveLon == null) return;
 
+    // Validate location is within active region
+    if (!isWithinBoundary(effectiveLat, effectiveLon)) {
+      setLocationError('You can only log sightings within your active region');
+      return;
+    }
+
     onSubmit({
       speciesId: finalSpeciesId,
       latitude: effectiveLat,
@@ -277,7 +283,7 @@ export function SightingForm({ onSubmit, speciesOptions, expedition }: SightingF
       <button
         type="submit"
         className="btn btn--primary btn--full"
-        disabled={!speciesId || effectiveLat == null || effectiveLon == null}
+        disabled={!!locationError || !speciesId || effectiveLat == null || effectiveLon == null}
       >
         Log Sighting
       </button>

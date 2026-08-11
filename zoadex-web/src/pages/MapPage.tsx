@@ -380,16 +380,16 @@ export function MapPage() {
               currentRegionId={displayRegionId ?? undefined}
               onSwitchRegion={(id) => setViewedRegionId(id)}
             >
-              <ExploredGrid
+              {isAuthenticated && (<ExploredGrid
                 regionId={activeRegionId}
                 paintMode={paintMode}
                 onCellPainted={handleCellPainted}
-              />
-              <MapNotes
+              />)}
+              {isAuthenticated && (<MapNotes
                 regionId={activeRegionId}
                 addNoteMode={addNoteMode}
                 onOpenNoteForm={handleOpenNoteForm}
-              />
+              />)}
             </SightingMap>
           </div>
           {selectedCategories.size === 0 && !focusSpeciesId && (
