@@ -1,5 +1,5 @@
 import { FormEvent, useState, ChangeEvent, useRef, useEffect } from 'react';
-import { MapPin, Calendar, Camera, Compass, X } from 'lucide-react';
+import { MapPin, Calendar, Camera, Compass } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { useQuery } from '@tanstack/react-query';
@@ -18,10 +18,7 @@ interface SightingFormProps {
     photoUrl?: string;
     photo?: File;
   }) => void;
-  speciesOptions: { id: string; name: string }[];
-  selectedSpecies?: { id: string; name: string } | null;
-  onClearSpecies?: () => void;
-  expedition?: Expedition | null;
+  speciesOptions: { id: string; name: string }[];  expedition?: Expedition | null;
 }
 
 // Inner component that must live inside MapContainer
@@ -54,10 +51,10 @@ function DraggableMarker({ position, onPositionChange }: {
   );
 }
 
-export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, onClearSpecies, expedition }: SightingFormProps) {
+export function SightingForm({ onSubmit, speciesOptions, expedition }: SightingFormProps) {
   const { latitude, longitude, requestLocation, loading: geoLoading } = useGeolocation();
   const { regionCenter, activeRegionId } = useActiveRegion();
-  const [speciesId, setSpeciesId] = useState(selectedSpecies?.id ?? '');
+  const [speciesId, setSpeciesId] = useState('');
   const [dateTime, setDateTime] = useState(
     new Date().toISOString().slice(0, 16),
   );
@@ -131,7 +128,7 @@ export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, onClea
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const finalSpeciesId = selectedSpecies?.id ?? speciesId;
+    const finalSpeciesId = speciesId;
     if (!finalSpeciesId || effectiveLat == null || effectiveLon == null) return;
 
     onSubmit({
@@ -147,25 +144,7 @@ export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, onClea
 
   return (
     <form className="sighting-form" onSubmit={handleSubmit}>
-      {selectedSpecies ? (
-        <div className="form-group">
-          <label>Species</label>
-          <div className="sighting-form__selected-species">
-            <strong>{selectedSpecies.name}</strong>
-            {onClearSpecies && (
-              <button
-                type="button"
-                className="sighting-form__clear-species"
-                onClick={onClearSpecies}
-                aria-label="Clear selected species"
-              >
-                <X size={14} />
-              </button>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div className="form-group">
+      <div className="form-group">
           <label htmlFor="species-select">Species</label>
           <select
             id="species-select"
@@ -181,9 +160,7 @@ export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, onClea
             ))}
           </select>
         </div>
-      )}
-
-      <div className="form-group">
+            <div className="form-group">
         <label htmlFor="datetime">
           <Calendar size={16} /> Date &amp; Time
         </label>
@@ -300,7 +277,7 @@ export function SightingForm({ onSubmit, speciesOptions, selectedSpecies, onClea
       <button
         type="submit"
         className="btn btn--primary btn--full"
-        disabled={!(selectedSpecies?.id ?? speciesId) || effectiveLat == null || effectiveLon == null}
+        disabled={!speciesId || effectiveLat == null || effectiveLon == null}
       >
         Log Sighting
       </button>

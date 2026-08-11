@@ -381,12 +381,12 @@ export function MapPage() {
               onSwitchRegion={(id) => setViewedRegionId(id)}
             >
               <ExploredGrid
-                regionId={displayRegionId}
+                regionId={activeRegionId}
                 paintMode={paintMode}
                 onCellPainted={handleCellPainted}
               />
               <MapNotes
-                regionId={displayRegionId}
+                regionId={activeRegionId}
                 addNoteMode={addNoteMode}
                 onOpenNoteForm={handleOpenNoteForm}
               />

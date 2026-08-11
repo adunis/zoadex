@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Search, CheckCircle, Award, X } from 'lucide-react';
+import { Search, CheckCircle, Award } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { SightingForm } from '../components/sighting/SightingForm';
-import { SuggestionList } from '../components/sighting/SuggestionList';
 import { suggestionService } from '../services/suggestionService';
 import { sightingService } from '../services/sightingService';
 import { speciesService } from '../services/speciesService';
@@ -15,7 +14,6 @@ import { CreateSightingRequest } from '../types/sighting';
 
 export function DiscoverPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSpecies, setSelectedSpecies] = useState<{ id: string; name: string } | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [badgeUnlocked, setBadgeUnlocked] = useState<string | null>(null);
   const { latitude, longitude, requestLocation, loading: geoLoading } = useGeolocation();
@@ -43,16 +41,10 @@ export function DiscoverPage() {
     enabled: searchQuery.length >= 2 && !!activeRegionId,
   });
 
+  // Suggestions and search results unified into the dropdown options
   const speciesOptions = searchQuery.length >= 2
     ? searchResults.map((s) => ({ id: s.id, name: s.commonName ?? s.scientificName }))
     : suggestions.map((s) => ({ id: s.speciesId, name: s.commonName ?? s.scientificName }));
-
-  const handleSuggestionSelect = (speciesId: string) => {
-    const suggestion = suggestions.find((s) => s.speciesId === speciesId);
-    if (suggestion) {
-      setSelectedSpecies({ id: suggestion.speciesId, name: suggestion.commonName ?? suggestion.scientificName });
-    }
-  };
 
   const handleSubmit = async (data: {
     speciesId: string;
@@ -74,7 +66,6 @@ export function DiscoverPage() {
       setTimeout(() => {
         setSubmitSuccess(false);
         setBadgeUnlocked(null);
-        setSelectedSpecies(null);
       }, 3000);
     } catch {
       // Error handled by service fallback
@@ -88,7 +79,7 @@ export function DiscoverPage() {
           <div className="success-animation__icon">
             <CheckCircle size={64} />
           </div>
-          <h2>Sighting Logged! 🎉</h2>
+          <h2>Sighting Logged!</h2>
           <p>Great observation! Keep exploring.</p>
           {badgeUnlocked && (
             <div className="badge-unlock-notification">
@@ -107,7 +98,7 @@ export function DiscoverPage() {
 
       {!latitude && !geoLoading && (
         <div className="discover-page__location-prompt">
-          <p>📍 Enable location for species suggestions</p>
+          <p>Enable location for species suggestions</p>
           <button className="btn btn--secondary" onClick={requestLocation}>
             Allow Location
           </button>
@@ -129,32 +120,11 @@ export function DiscoverPage() {
             aria-label="Search species"
           />
         </div>
-        {selectedSpecies && (
-          <div className="discover-page__selected-species">
-            <span>✓ {selectedSpecies.name}</span>
-            <button
-              className="sighting-form__clear-species"
-              onClick={() => setSelectedSpecies(null)}
-              aria-label="Clear selected species"
-            >
-              <X size={14} />
-            </button>
-          </div>
-        )}
       </div>
-
-      {!selectedSpecies && searchQuery.length < 2 && (
-        <SuggestionList
-          suggestions={suggestions}
-          onSelect={handleSuggestionSelect}
-        />
-      )}
 
       <SightingForm
         onSubmit={handleSubmit}
         speciesOptions={speciesOptions}
-        selectedSpecies={selectedSpecies}
-        onClearSpecies={() => setSelectedSpecies(null)}
         expedition={expedition}
       />
     </div>

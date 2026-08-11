@@ -4709,3 +4709,44 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-muted);
   margin-bottom: 0.5rem;
 }
+
+.map-note-form__photo-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.map-note-form__photo-input {
+  font-size: 0.85rem;
+}
+
+.map-note-form__photo-preview {
+  position: relative;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+  overflow: hidden;
+  max-height: 120px;
+}
+
+.map-note-form__photo-preview img {
+  width: 100%;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.map-note-form__photo-preview button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}

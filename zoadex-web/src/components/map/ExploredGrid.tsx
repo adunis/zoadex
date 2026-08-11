@@ -41,10 +41,10 @@ export function ExploredGrid({ regionId, paintMode, onCellPainted }: ExploredGri
   const fetchCells = useCallback(async () => {
     if (!regionId) return;
     try {
-      const response = await api.get<ExploredCell[]>('/map/exploration/cells', {
+      const response = await api.get<{ cells: { cellX: number; cellY: number; zoomLevel: number }[]; totalExplored: number }>('/map/exploration/cells', {
         params: { regionId },
       });
-      setCells(response.data);
+      setCells(response.data.cells.map(c => ({ x: c.cellX, y: c.cellY, zoom: c.zoomLevel })));
     } catch {
       // ignore fetch errors
     }
@@ -60,9 +60,8 @@ export function ExploredGrid({ regionId, paintMode, onCellPainted }: ExploredGri
     try {
       await api.post('/map/exploration/cells', {
         regionId,
-        x: tile.x,
-        y: tile.y,
-        zoom: ZOOM_LEVEL,
+        cells: [{ x: tile.x, y: tile.y }],
+        zoomLevel: ZOOM_LEVEL,
       });
       setCells(prev => {
         const exists = prev.some(c => c.x === tile.x && c.y === tile.y);

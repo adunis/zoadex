@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Marker, Popup, useMapEvents } from 'react-leaflet';
+import { Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { X } from 'lucide-react';
+import { X, Camera } from 'lucide-react';
 import api from '../../services/api';
 
 interface MapNote {
@@ -56,6 +56,19 @@ export function MapNotes({ regionId, addNoteMode, onOpenNoteForm }: MapNotesProp
     },
   });
 
+  // Crosshair cursor in addNote mode
+  const map = useMap();
+  useEffect(() => {
+    const container = map.getContainer();
+    if (addNoteMode) {
+      container.style.cursor = 'crosshair';
+    } else {
+      container.style.cursor = '';
+    }
+    return () => { container.style.cursor = ''; };
+  }, [addNoteMode, map]);
+
+
   return (
     <>
       {notes.map((note) => (
@@ -97,7 +110,17 @@ interface MapNoteFormProps {
 export function MapNoteForm({ latitude, longitude, regionId, onClose, onSubmitted }: MapNoteFormProps) {
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
-  const [mediaUrl, setMediaUrl] = useState('');
+  const [mediaUrl] = useState('');
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // file stored as preview
+      const reader = new FileReader();
+      reader.onload = (ev) => setPhotoPreview(ev.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -111,7 +134,8 @@ export function MapNoteForm({ latitude, longitude, regionId, onClose, onSubmitte
         text: text.trim(),
         latitude,
         longitude,
-        mediaUrl: mediaUrl.trim() || undefined,
+        mediaUrl: photoPreview || mediaUrl.trim() || undefined,
+        mediaType: photoPreview ? 'photo' : undefined,
       });
       onSubmitted();
       onClose();
@@ -161,14 +185,25 @@ export function MapNoteForm({ latitude, longitude, regionId, onClose, onSubmitte
             />
           </div>
           <div className="form-group">
-            <label htmlFor="note-media">Photo URL (optional)</label>
+            <label className="map-note-form__photo-label">
+              <Camera size={16} /> Photo (optional)
+            </label>
             <input
-              id="note-media"
-              type="url"
-              value={mediaUrl}
-              onChange={(e) => setMediaUrl(e.target.value)}
-              placeholder="https://..."
+              id="note-photo"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handlePhotoChange}
+              className="map-note-form__photo-input"
             />
+            {photoPreview && (
+              <div className="map-note-form__photo-preview">
+                <img src={photoPreview} alt="Preview" />
+                <button type="button" onClick={() => { setPhotoPreview(null);  }}>
+                  <X size={14} />
+                </button>
+              </div>
+            )}
           </div>
           <p className="map-note-form__coords">
             📍 {latitude.toFixed(4)}, {longitude.toFixed(4)}
