@@ -4750,3 +4750,17 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   cursor: pointer;
 }
+.discover-page__title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  font-size: 1.3rem;
+}
+
+.discover-page__title-region {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+}

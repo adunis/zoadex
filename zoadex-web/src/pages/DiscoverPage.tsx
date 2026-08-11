@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, CheckCircle, Award } from 'lucide-react';
+import { CountryFlag } from '../components/common/CountryFlag';
 import { useQuery } from '@tanstack/react-query';
 import { SightingForm } from '../components/sighting/SightingForm';
 import { suggestionService } from '../services/suggestionService';
@@ -94,7 +95,15 @@ export function DiscoverPage() {
 
   return (
     <div className="page discover-page">
-      <h2>Log a Sighting</h2>
+      <h2 className="discover-page__title">
+        Log a Sighting in{' '}
+        {regions[0] && (
+          <span className="discover-page__title-region">
+            <CountryFlag country={regions[0].country} regionName={regions[0].name} size={22} />
+            {regions[0].name}
+          </span>
+        )}
+      </h2>
 
       {!latitude && !geoLoading && (
         <div className="discover-page__location-prompt">
