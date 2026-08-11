@@ -1,7 +1,8 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { AuthProvider } from './context/AuthContext';
+import { useAuth } from './hooks/useAuth';
 import { MockModeProvider, useMockMode } from './context/MockModeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { registerMockModeCallback, unregisterMockModeCallback } from './services/withFallback';
@@ -55,6 +56,12 @@ function MockModeSync() {
   return null;
 }
 
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  return <>{children}</>;
+}
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -75,19 +82,19 @@ function App() {
               <Route element={<Layout />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/map" element={<MapPage />} />
-                <Route path="/log" element={<DiscoverPage />} />
-                <Route path="/explore" element={<ChecklistPage />} />
-                <Route path="/discover" element={<DiscoverPage />} />
-                <Route path="/expedition" element={<ExpeditionPage />} />
+                <Route path="/log" element={<ProtectedRoute><DiscoverPage /></ProtectedRoute>} />
+                <Route path="/explore" element={<ProtectedRoute><ChecklistPage /></ProtectedRoute>} />
+                <Route path="/discover" element={<ProtectedRoute><DiscoverPage /></ProtectedRoute>} />
+                <Route path="/expedition" element={<ProtectedRoute><ExpeditionPage /></ProtectedRoute>} />
                 <Route path="/checklist" element={<ChecklistPage />} />
-                <Route path="/badges" element={<BadgesPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/regions" element={<RegionsPage />} />
+                <Route path="/badges" element={<ProtectedRoute><BadgesPage /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+                <Route path="/regions" element={<ProtectedRoute><RegionsPage /></ProtectedRoute>} />
                 <Route path="/regions/:id" element={<RegionDetailPage />} />
                 <Route path="/species/:id" element={<SpeciesDetailPage />} />
-                <Route path="/feed" element={<FeedPage />} />
+                <Route path="/feed" element={<ProtectedRoute><FeedPage /></ProtectedRoute>} />
                 <Route path="/sightings/:id" element={<SightingDetailPage />} />
-                <Route path="/friends" element={<FriendsPage />} />
+                <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
               </Route>
             </Routes>
           </BrowserRouter>

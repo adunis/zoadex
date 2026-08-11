@@ -1,4 +1,5 @@
-import { MapPin, RefreshCw } from 'lucide-react';
+import { MapPin, RefreshCw, LogIn } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { WeatherCard } from '../components/home/WeatherCard';
 import { CategoryTabs } from '../components/home/CategoryTabs';
@@ -18,8 +19,30 @@ export function HomePage() {
     queryKey: ['sightingPins'],
     queryFn: () => sightingService.getMapPins(),
     enabled: isAuthenticated,
-  });
-
+  });  if (!isAuthenticated) {
+    return (
+      <div className="page home-page">
+        <header className="home-page__header home-page__header--guest">
+          <h1 className="home-page__logo">🌍 ZoaDex</h1>
+          <p className="home-page__tagline">Your real-world Pokédex for biodiversity discovery</p>
+          <p className="home-page__subtitle">
+            Explore species in 236 regions across 73 countries. Log sightings, earn badges, and discover nature like never before.
+          </p>
+          <div className="home-page__cta">
+            <Link to="/login" className="btn btn--primary btn--large">
+              <LogIn size={18} /> Login
+            </Link>
+            <Link to="/register" className="btn btn--secondary btn--large">
+              Create Account
+            </Link>
+          </div>
+          <p className="home-page__map-hint">
+            👇 You can still explore the <Link to="/map">Map</Link> without an account
+          </p>
+        </header>
+      </div>
+    );
+  }
   return (
     <div className="page home-page">
       <header className="home-page__header">

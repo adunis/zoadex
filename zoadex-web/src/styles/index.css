@@ -4794,3 +4794,49 @@ h1, h2, h3, h4, h5, h6 {
   white-space: nowrap;
   font-size: 0.75rem;
 }
+
+/* Guest homepage */
+.home-page__header--guest {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.home-page__logo {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.home-page__tagline {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.home-page__subtitle {
+  color: var(--text-muted);
+  max-width: 400px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.5;
+}
+
+.home-page__cta {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.btn--large {
+  padding: 12px 24px;
+  font-size: 1rem;
+}
+
+.home-page__map-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.home-page__map-hint a {
+  color: var(--accent, #2d6a4f);
+  font-weight: 600;
+}
