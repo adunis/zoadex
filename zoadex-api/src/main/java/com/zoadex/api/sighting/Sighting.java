@@ -51,6 +51,13 @@ public class Sighting {
     @Column(name = "photo_url", columnDefinition = "TEXT")
     private String photoUrl;
 
+    @Column(name = "video_url", columnDefinition = "TEXT")
+    private String videoUrl;
+
+    @Column(name = "media_type", length = 20)
+    @Builder.Default
+    private String mediaType = "photo";
+
     @Column(name = "is_first_discovery")
     @Builder.Default
     private Boolean isFirstDiscovery = false;

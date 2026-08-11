@@ -24,6 +24,8 @@ public class SightingResponse {
     private String locationName;
     private String notes;
     private String photoUrl;
+    private String videoUrl;
+    private String mediaType;
     private Boolean isFirstDiscovery;
     private UUID expeditionId;
     private LocalDateTime createdAt;

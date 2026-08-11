@@ -78,6 +78,8 @@ public class SightingService {
                 .locationName(request.getLocationName())
                 .notes(request.getNotes())
                 .photoUrl(request.getPhotoUrl())
+                .videoUrl(request.getVideoUrl())
+                .mediaType(request.getMediaType() != null ? request.getMediaType() : "photo")
                 .isFirstDiscovery(isFirstDiscovery)
                 .expeditionId(request.getExpeditionId())
                 .build();
@@ -161,6 +163,8 @@ public class SightingService {
                 .locationName(sighting.getLocationName())
                 .notes(sighting.getNotes())
                 .photoUrl(sighting.getPhotoUrl())
+                .videoUrl(sighting.getVideoUrl())
+                .mediaType(sighting.getMediaType())
                 .isFirstDiscovery(sighting.getIsFirstDiscovery())
                 .expeditionId(sighting.getExpeditionId())
                 .createdAt(sighting.getCreatedAt())

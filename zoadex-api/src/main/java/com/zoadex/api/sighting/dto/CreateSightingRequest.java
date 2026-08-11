@@ -26,5 +26,7 @@ public class CreateSightingRequest {
     private String locationName;
     private String notes;
     private String photoUrl;
+    private String videoUrl;
+    private String mediaType; // "photo", "video", "both"
     private UUID expeditionId;
 }
