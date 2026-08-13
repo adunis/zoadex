@@ -31,6 +31,9 @@ public interface SpeciesRepository extends JpaRepository<Species, UUID> {
             "OR LOWER(s.scientificName) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<Species> search(@Param("query") String query, Pageable pageable);
 
+    List<Species> findByCommonNameContainingIgnoreCaseOrScientificNameContainingIgnoreCase(
+            String commonName, String scientificName, Pageable pageable);
+
     @Query(value = "SELECT s.* FROM species s " +
                    "JOIN region_species rs ON rs.species_id = s.id " +
                    "WHERE rs.region_id = :regionId " +

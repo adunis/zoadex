@@ -77,6 +77,7 @@ export function ExploredGrid({ regionId, paintMode, onCellPainted }: ExploredGri
   useMapEvents({
     click(e) {
       if (paintMode) {
+        e.originalEvent.stopPropagation();
         paintCell(e.latlng.lat, e.latlng.lng);
       }
     },

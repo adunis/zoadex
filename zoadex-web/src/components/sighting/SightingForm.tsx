@@ -1,5 +1,5 @@
 import { FormEvent, useState, ChangeEvent, useRef, useEffect } from 'react';
-import { MapPin, Calendar, Camera, Compass } from 'lucide-react';
+import { MapPin, Calendar, Camera, Compass, Video } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { useQuery } from '@tanstack/react-query';
@@ -17,6 +17,7 @@ interface SightingFormProps {
     notes?: string;
     photoUrl?: string;
     photo?: File;
+    video?: File;
   }) => void;
   speciesOptions: { id: string; name: string }[];  expedition?: Expedition | null;
 }
@@ -61,6 +62,8 @@ export function SightingForm({ onSubmit, speciesOptions, expedition }: SightingF
   const [notes, setNotes] = useState('');
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
   const [latitudeInput, setLatitudeInput] = useState('');
   const [longitudeInput, setLongitudeInput] = useState('');
   const [locationError, setLocationError] = useState<string | null>(null);
@@ -126,6 +129,14 @@ export function SightingForm({ onSubmit, speciesOptions, expedition }: SightingF
     }
   };
 
+  const handleVideoChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setVideoFile(file);
+      setVideoPreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const finalSpeciesId = speciesId;
@@ -145,6 +156,7 @@ export function SightingForm({ onSubmit, speciesOptions, expedition }: SightingF
       notes: notes || undefined,
       photoUrl: photoPreview ?? undefined,
       photo: photoFile ?? undefined,
+      video: videoFile ?? undefined,
     });
   };
 
@@ -269,6 +281,23 @@ export function SightingForm({ onSubmit, speciesOptions, expedition }: SightingF
         {photoPreview && (
           <div className="photo-preview">
             <img src={photoPreview} alt="Sighting preview" />
+          </div>
+        )}
+      </div>
+
+      <div className="form-group">
+        <label>
+          <Video size={16} /> Video
+        </label>
+        <input
+          type="file"
+          accept="video/*"
+          capture="environment"
+          onChange={handleVideoChange}
+        />
+        {videoPreview && (
+          <div className="video-preview">
+            <video src={videoPreview} controls style={{ maxHeight: '200px', width: '100%', borderRadius: '8px' }} />
           </div>
         )}
       </div>

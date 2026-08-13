@@ -81,6 +81,17 @@ export const speciesService = {
     );
   },
 
+  async searchGlobal(query: string, limit = 20): Promise<Species[]> {
+    try {
+      const response = await api.get<Species[]>('/species/search', {
+        params: { q: query, limit },
+      });
+      return response.data;
+    } catch {
+      return [];
+    }
+  },
+
   async getSummary(regionId: string): Promise<SpeciesSummary[]> {
     // Check browser cache first (24h TTL)
     try {

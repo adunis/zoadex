@@ -12,6 +12,7 @@ import { useExpedition } from '../hooks/useExpedition';
 import { Suggestion } from '../types/suggestion';
 import { Species } from '../types/species';
 import { CreateSightingRequest } from '../types/sighting';
+import { showLocalNotification } from '../utils/pushNotifications';
 
 export function DiscoverPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,9 +43,15 @@ export function DiscoverPage() {
     enabled: searchQuery.length >= 2 && !!activeRegionId,
   });
 
+  const { data: globalResults = [] } = useQuery<Species[]>({
+    queryKey: ['speciesSearchGlobal', searchQuery],
+    queryFn: () => speciesService.searchGlobal(searchQuery, 20),
+    enabled: searchQuery.length >= 2 && searchResults.length === 0,
+  });
+
   // Suggestions and search results unified into the dropdown options
   const speciesOptions = searchQuery.length >= 2
-    ? searchResults.map((s) => ({ id: s.id, name: s.commonName ?? s.scientificName }))
+    ? (searchResults.length > 0 ? searchResults : globalResults).map((s) => ({ id: s.id, name: s.commonName ?? s.scientificName }))
     : suggestions.map((s) => ({ id: s.speciesId, name: s.commonName ?? s.scientificName }));
 
   const handleSubmit = async (data: {
@@ -54,6 +61,8 @@ export function DiscoverPage() {
     dateTime: string;
     notes?: string;
     photoUrl?: string;
+    photo?: File;
+    video?: File;
   }) => {
     const request: CreateSightingRequest = {
       ...data,
@@ -64,6 +73,7 @@ export function DiscoverPage() {
       await sightingService.create(request);
       setSubmitSuccess(true);
       setBadgeUnlocked('Explorer');
+      showLocalNotification('Sighting logged! +10 XP', 'Great observation! Keep exploring.', '/favicon.svg');
       setTimeout(() => {
         setSubmitSuccess(false);
         setBadgeUnlocked(null);

@@ -8,6 +8,7 @@ import { MapHoverHandler } from './MapHoverHandler';
 import { CrosshairMarker } from './CrosshairMarker';
 import { RegionBoundaryOverlay } from './RegionBoundaryOverlay';
 import { RegionLabels } from './RegionLabels';
+import { GreyAreaClickHandler } from './GreyAreaClickHandler';
 import { HeatmapPoint } from '../../types/map';
 import { Region } from '../../types/region';
 import 'leaflet/dist/leaflet.css';
@@ -49,6 +50,8 @@ interface SightingMapProps {
   regions?: Region[];
   currentRegionId?: string;
   onSwitchRegion?: (regionId: string) => void;
+  paintMode?: boolean;
+  addNoteMode?: boolean;
   children?: React.ReactNode;
 }
 
@@ -86,8 +89,12 @@ export function SightingMap({
   regions,
   currentRegionId,
   onSwitchRegion,
+  paintMode = false,
+  addNoteMode = false,
   children,
 }: SightingMapProps) {
+  const isToolActive = paintMode || addNoteMode;
+
   return (
     <div className="sighting-map-wrapper">
       <MapContainer
@@ -102,7 +109,7 @@ export function SightingMap({
         />
         <MapController center={center} zoom={zoom} />
         {boundary && <RegionBoundaryOverlay boundary={boundary} />}
-        {regions && onSwitchRegion && (
+        {regions && onSwitchRegion && !isToolActive && (
           <RegionLabels
             regions={regions}
             currentRegionId={currentRegionId}
@@ -146,6 +153,14 @@ export function SightingMap({
           </Marker>
         ))}
         {showCrosshair && <CrosshairMarker />}
+        {!isToolActive && regions && onSwitchRegion && boundary && (
+          <GreyAreaClickHandler
+            boundary={boundary}
+            regions={regions}
+            currentRegionId={currentRegionId}
+            onSwitchRegion={onSwitchRegion}
+          />
+        )}
         {children}
 
       </MapContainer>

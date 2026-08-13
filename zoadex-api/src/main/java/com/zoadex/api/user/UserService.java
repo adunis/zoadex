@@ -1,19 +1,31 @@
 package com.zoadex.api.user;
 
+import com.zoadex.api.badge.UserBadge;
+import com.zoadex.api.badge.UserBadgeRepository;
 import com.zoadex.api.common.exception.BadRequestException;
 import com.zoadex.api.common.exception.ResourceNotFoundException;
+import com.zoadex.api.map.exploration.ExploredCellRepository;
+import com.zoadex.api.map.exploration.MapNoteRepository;
 import com.zoadex.api.region.Region;
 import com.zoadex.api.region.RegionRepository;
+import com.zoadex.api.sighting.Sighting;
 import com.zoadex.api.sighting.SightingRepository;
+import com.zoadex.api.social.FriendshipRepository;
+import com.zoadex.api.social.NotificationRepository;
+import com.zoadex.api.xp.XpEvent;
+import com.zoadex.api.xp.XpEventRepository;
 import com.zoadex.api.xp.XpService;
 import com.zoadex.api.user.dto.UpdateProfileRequest;
 import com.zoadex.api.user.dto.UserProfileResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -25,6 +37,12 @@ public class UserService {
     private final SightingRepository sightingRepository;
     private final UserRegionRepository userRegionRepository;
     private final XpService xpService;
+    private final XpEventRepository xpEventRepository;
+    private final UserBadgeRepository userBadgeRepository;
+    private final ExploredCellRepository exploredCellRepository;
+    private final MapNoteRepository mapNoteRepository;
+    private final FriendshipRepository friendshipRepository;
+    private final NotificationRepository notificationRepository;
 
     public UserProfileResponse getProfile(UUID userId) {
         User user = userRepository.findById(userId)
@@ -161,4 +179,104 @@ public class UserService {
             case FREE -> 1;
         };
     }
+
+    /**
+     * GDPR: Export all user data as a map.
+     */
+    public Map<String, Object> exportUserData(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        Map<String, Object> data = new HashMap<>();
+
+        // Profile
+        Map<String, Object> profile = new HashMap<>();
+        profile.put("id", user.getId());
+        profile.put("email", user.getEmail());
+        profile.put("username", user.getUsername());
+        profile.put("plan", user.getPlan().name());
+        profile.put("xp", user.getXp());
+        profile.put("level", user.getLevel());
+        profile.put("createdAt", user.getCreatedAt());
+        data.put("profile", profile);
+
+        // Sightings
+        List<Sighting> sightings = sightingRepository.findByUserId(userId, Pageable.unpaged()).getContent();
+        data.put("sightings", sightings.stream().map(s -> {
+            Map<String, Object> sm = new HashMap<>();
+            sm.put("id", s.getId());
+            sm.put("speciesId", s.getSpeciesId());
+            sm.put("sightedAt", s.getSightedAt());
+            sm.put("notes", s.getNotes());
+            sm.put("photoUrl", s.getPhotoUrl());
+            sm.put("videoUrl", s.getVideoUrl());
+            sm.put("createdAt", s.getCreatedAt());
+            return sm;
+        }).toList());
+
+        // Badges
+        List<UserBadge> badges = userBadgeRepository.findByUserId(userId);
+        data.put("badges", badges.stream().map(b -> {
+            Map<String, Object> bm = new HashMap<>();
+            bm.put("id", b.getId());
+            bm.put("badgeId", b.getBadgeId());
+            bm.put("unlockedAt", b.getUnlockedAt());
+            return bm;
+        }).toList());
+
+        // XP Events
+        List<XpEvent> xpEvents = xpEventRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        data.put("xpEvents", xpEvents.stream().map(x -> {
+            Map<String, Object> xm = new HashMap<>();
+            xm.put("id", x.getId());
+            xm.put("amount", x.getAmount());
+            xm.put("reason", x.getReason());
+            xm.put("description", x.getDescription());
+            xm.put("createdAt", x.getCreatedAt());
+            return xm;
+        }).toList());
+
+        return data;
+    }
+
+    /**
+     * GDPR: Delete account and all associated data.
+     */
+    @Transactional
+    public void deleteAccount(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        // Delete sightings
+        List<Sighting> sightings = sightingRepository.findByUserId(userId, Pageable.unpaged()).getContent();
+        sightingRepository.deleteAll(sightings);
+
+        // Delete badges
+        List<UserBadge> badges = userBadgeRepository.findByUserId(userId);
+        userBadgeRepository.deleteAll(badges);
+
+        // Delete XP events
+        List<XpEvent> xpEvents = xpEventRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        xpEventRepository.deleteAll(xpEvents);
+
+        // Delete explored cells
+        exploredCellRepository.deleteAll(exploredCellRepository.findByUserId(userId));
+
+        // Delete map notes
+        mapNoteRepository.deleteAll(mapNoteRepository.findByUserId(userId));
+
+        // Delete friendships
+        friendshipRepository.deleteAll(friendshipRepository.findAcceptedFriendships(userId));
+        friendshipRepository.deleteAll(friendshipRepository.findByUserIdAndStatus(userId, "PENDING"));
+
+        // Delete notifications
+        notificationRepository.deleteAll(notificationRepository.findByUserIdOrderByCreatedAtDesc(userId, Pageable.unpaged()));
+
+        // Delete user region links
+        userRegionRepository.deleteAll(userRegionRepository.findByUserId(userId));
+
+        // Finally delete the user
+        userRepository.delete(user);
+    }
 }
+

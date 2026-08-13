@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,26 @@ public class UserController {
                 "type", e.getClass().getSimpleName()
             ));
         }
+    }
+
+    /**
+     * GET /api/v1/users/me/export — GDPR data export
+     */
+    @GetMapping("/me/export")
+    public ResponseEntity<?> exportMyData(Authentication authentication) {
+        UUID userId = (UUID) authentication.getPrincipal();
+        Map<String, Object> data = userService.exportUserData(userId);
+        return ResponseEntity.ok(data);
+    }
+
+    /**
+     * DELETE /api/v1/users/me — GDPR account deletion
+     */
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteMyAccount(Authentication authentication) {
+        UUID userId = (UUID) authentication.getPrincipal();
+        userService.deleteAccount(userId);
+        return ResponseEntity.ok(Map.of("deleted", true));
     }
 
     /**
@@ -83,3 +104,4 @@ public class UserController {
         }
     }
 }
+

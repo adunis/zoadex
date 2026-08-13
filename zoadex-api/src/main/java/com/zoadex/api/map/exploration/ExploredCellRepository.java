@@ -14,6 +14,8 @@ public interface ExploredCellRepository extends JpaRepository<ExploredCell, UUID
 
     List<ExploredCell> findByUserIdAndRegionId(UUID userId, UUID regionId);
 
+    List<ExploredCell> findByUserId(UUID userId);
+
     boolean existsByUserIdAndRegionIdAndCellXAndCellYAndZoomLevel(
             UUID userId, UUID regionId, int cellX, int cellY, int zoomLevel);
 

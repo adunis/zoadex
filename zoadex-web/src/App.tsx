@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import { useAuth } from './hooks/useAuth';
 import { MockModeProvider, useMockMode } from './context/MockModeContext';
 import { LanguageProvider } from './context/LanguageContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { registerMockModeCallback, unregisterMockModeCallback } from './services/withFallback';
 import { Layout } from './components/layout/Layout';
 import { HomePage } from './pages/HomePage';
@@ -25,6 +26,8 @@ import { SpeciesDetailPage } from './pages/SpeciesDetailPage';
 import { FeedPage } from './pages/FeedPage';
 import { SightingDetailPage } from './pages/SightingDetailPage';
 import { FriendsPage } from './pages/FriendsPage';
+import { SearchPage } from './pages/SearchPage';
+import { LeaderboardPage } from './pages/LeaderboardPage';
 import { EmailVerificationBanner } from './components/auth/EmailVerificationBanner';
 import { InstallPrompt } from './components/pwa/InstallPrompt';
 
@@ -69,6 +72,7 @@ function App() {
         <MockModeSync />
         <AuthProvider>
           <LanguageProvider>
+            <ThemeProvider>
             <BrowserRouter>
             <DemoBanner />
             <InstallPrompt />
@@ -95,9 +99,12 @@ function App() {
                 <Route path="/feed" element={<ProtectedRoute><FeedPage /></ProtectedRoute>} />
                 <Route path="/sightings/:id" element={<SightingDetailPage />} />
                 <Route path="/friends" element={<ProtectedRoute><FriendsPage /></ProtectedRoute>} />
+                <Route path="/search" element={<SearchPage />} />
+                <Route path="/leaderboard" element={<LeaderboardPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
+          </ThemeProvider>
           </LanguageProvider>
         </AuthProvider>
       </MockModeProvider>

@@ -57,6 +57,15 @@ public class SpeciesService {
                 .map(this::toResponse);
     }
 
+    public List<SpeciesResponse> searchGlobal(String query, Pageable pageable) {
+        if (query == null || query.isBlank()) {
+            return List.of();
+        }
+        List<Species> results = speciesRepository
+                .findByCommonNameContainingIgnoreCaseOrScientificNameContainingIgnoreCase(query, query, pageable);
+        return results.stream().map(this::toResponse).toList();
+    }
+
     private SpeciesResponse toResponse(Species species) {
         // Get first image if available
         List<SpeciesImage> images = speciesImageRepository.findBySpeciesId(species.getId());

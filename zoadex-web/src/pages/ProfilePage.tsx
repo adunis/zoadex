@@ -1,4 +1,4 @@
-import { Award, Eye, LogOut, MapPin, Calendar, Flame, CreditCard, Star, Users } from 'lucide-react';
+import { Award, Eye, LogOut, MapPin, Calendar, Flame, CreditCard, Star, Users, Moon, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../hooks/useAuth';
@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { badgeService } from '../services/badgeService';
 import { BadgeCard } from '../components/badges/BadgeCard';
 import { useLanguageContext } from '../context/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
 import { UI_LANGUAGES, SPECIES_LANGUAGES, SpeciesLanguage } from '../i18n/translations';
 import api from '../services/api';
 
@@ -43,6 +44,9 @@ export function ProfilePage() {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { uiLanguage, speciesLanguages, setUiLanguage, setSpeciesLanguages, t } = useLanguageContext();
+  const { theme, toggleTheme } = useTheme();
+  const [deleteConfirm, setDeleteConfirm] = useState('');
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { data: myBadges = [] } = useQuery({
     queryKey: ['myBadges'],
@@ -209,7 +213,87 @@ export function ProfilePage() {
             <span>Share Location</span>
             <input type="checkbox" aria-label="Share location" />
           </div>
+          <div className="settings-item">
+            <span>Dark Mode</span>
+            <button
+              className="btn btn--small btn--secondary"
+              onClick={toggleTheme}
+              aria-label="Toggle dark mode"
+            >
+              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+              {theme === 'dark' ? ' Light' : ' Dark'}
+            </button>
+          </div>
         </div>
+      </section>
+
+      {/* Privacy & Data (GDPR) */}
+      <section className="profile-page__privacy">
+        <h3>Privacy &amp; Data</h3>
+        <div className="profile-page__privacy-actions">
+          <button
+            className="btn btn--secondary btn--full"
+            onClick={async () => {
+              try {
+                const response = await api.get('/users/me/export');
+                const blob = new Blob([JSON.stringify(response.data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'zoadex-my-data.json';
+                a.click();
+                URL.revokeObjectURL(url);
+              } catch {
+                alert('Failed to export data');
+              }
+            }}
+          >
+            📥 Export My Data
+          </button>
+
+          <button
+            className="btn btn--danger btn--full"
+            onClick={() => setShowDeleteDialog(true)}
+          >
+            🗑️ Delete Account
+          </button>
+        </div>
+
+        {showDeleteDialog && (
+          <div className="profile-page__delete-dialog">
+            <p>Type <strong>DELETE</strong> to permanently delete your account and all data:</p>
+            <input
+              type="text"
+              value={deleteConfirm}
+              onChange={(e) => setDeleteConfirm(e.target.value)}
+              placeholder="Type DELETE"
+              aria-label="Confirm deletion"
+            />
+            <div className="profile-page__delete-dialog-actions">
+              <button
+                className="btn btn--secondary btn--small"
+                onClick={() => { setShowDeleteDialog(false); setDeleteConfirm(''); }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn--danger btn--small"
+                disabled={deleteConfirm !== 'DELETE'}
+                onClick={async () => {
+                  try {
+                    await api.delete('/users/me');
+                    logout();
+                    navigate('/login');
+                  } catch {
+                    alert('Failed to delete account');
+                  }
+                }}
+              >
+                Permanently Delete
+              </button>
+            </div>
+          </div>
+        )}
       </section>
 
       <button className="btn btn--danger btn--full" onClick={handleLogout}>

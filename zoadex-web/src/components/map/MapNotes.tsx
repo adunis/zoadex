@@ -51,6 +51,7 @@ export function MapNotes({ regionId, addNoteMode, onOpenNoteForm }: MapNotesProp
   useMapEvents({
     click(e) {
       if (addNoteMode && onOpenNoteForm) {
+        e.originalEvent.stopPropagation();
         onOpenNoteForm(e.latlng.lat, e.latlng.lng);
       }
     },

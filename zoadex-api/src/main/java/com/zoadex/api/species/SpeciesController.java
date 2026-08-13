@@ -3,6 +3,7 @@ package com.zoadex.api.species;
 import com.zoadex.api.species.dto.SpeciesResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -38,8 +40,22 @@ public class SpeciesController {
         return ResponseEntity.ok(speciesService.search("", pageable));
     }
 
+    /**
+     * GET /api/v1/species/search?q=...&limit=20
+     * Global search across ALL regions by common_name or scientific_name.
+     */
+    @GetMapping("/search")
+    public ResponseEntity<List<SpeciesResponse>> searchGlobal(
+            @RequestParam String q,
+            @RequestParam(defaultValue = "20") int limit) {
+        Pageable pageable = PageRequest.of(0, Math.min(limit, 100));
+        List<SpeciesResponse> results = speciesService.searchGlobal(q, pageable);
+        return ResponseEntity.ok(results);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<SpeciesResponse> getSpeciesById(@PathVariable UUID id) {
         return ResponseEntity.ok(speciesService.getSpeciesById(id));
     }
 }
+

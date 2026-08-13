@@ -381,6 +381,8 @@ export function MapPage() {
               regions={regions}
               currentRegionId={displayRegionId ?? undefined}
               onSwitchRegion={(id) => setViewedRegionId(id)}
+              paintMode={paintMode}
+              addNoteMode={addNoteMode}
             >
               {isAuthenticated && (<ExploredGrid
                 regionId={activeRegionId}

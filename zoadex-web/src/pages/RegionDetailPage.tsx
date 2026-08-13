@@ -175,6 +175,13 @@ export function RegionDetailPage() {
 
       <section className="region-detail__progress">
         <h3>🎯 Discovery Progress</h3>
+        <button
+          className="btn btn--small btn--secondary"
+          onClick={() => navigate('/leaderboard')}
+          style={{ float: 'right', marginTop: '-2rem' }}
+        >
+          🏆 View Leaderboard
+        </button>
         <p className="region-detail__total">
           {totalSpecies} species catalogued in this region
         </p>
