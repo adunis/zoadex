@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/regions/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/species/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/suggestions/**").permitAll()
+                        .requestMatchers("/api/v1/map/exploration/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/map/**").permitAll()
                         .anyRequest().authenticated()
                 )
